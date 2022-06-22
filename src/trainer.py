@@ -1,6 +1,8 @@
-import torch
-from metric import graph_accuracy_score, graph_f1_score
 from typing import Tuple
+
+import torch
+
+from metric import graph_accuracy_score, graph_f1_score
 
 
 class Trainer:

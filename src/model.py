@@ -66,7 +66,9 @@ class GNN(torch.nn.Module):
 
         self._emb = None
 
-    def forward(self, x: torch.tensor, edge_index: torch.tensor, batch: torch.tensor) -> torch.tensor:
+    def forward(
+        self, x: torch.tensor, edge_index: torch.tensor, batch: torch.tensor
+    ) -> torch.tensor:
         # Graph Convolutions
         h = self.conv1(x, edge_index).relu()
         h = self.conv2(h, edge_index).relu()
@@ -108,7 +110,9 @@ class Attention(nn.Module):
         self.v = nn.Linear(dec_hid_dim, 1, bias=False)
         self.tanh = nn.Tanh()
 
-    def forward(self, hidden: torch.tensor, encoder_outputs: torch.tensor) -> torch.tensor:
+    def forward(
+        self, hidden: torch.tensor, encoder_outputs: torch.tensor
+    ) -> torch.tensor:
         # hidden = [batch size, dec hid dim]
         # encoder_outputs = [src len, batch size, enc hid dim * 2]
         src_len = encoder_outputs.shape[0]
@@ -129,11 +133,13 @@ class Attention(nn.Module):
 
 
 class GNNWithAttentionFusion(GNN):
-    def __init__(self, in_channels: int, hidden_channels: int, out_channels: int, device=None):
+    def __init__(
+        self, in_channels: int, hidden_channels: int, out_channels: int, device=None
+    ):
         super(GNNWithAttentionFusion, self).__init__(
             in_channels=in_channels,
             hidden_channels=hidden_channels,
-            out_channels=out_channels
+            out_channels=out_channels,
         )
 
         self.attention_1 = Attention(hidden_channels, out_channels)
@@ -145,7 +151,9 @@ class GNNWithAttentionFusion(GNN):
         self.hidden_channels = hidden_channels
         self.device = device or "cpu"
 
-    def forward(self, x: torch.tensor, edge_index: torch.tensor, batch: torch.tensor) -> torch.tensor:
+    def forward(
+        self, x: torch.tensor, edge_index: torch.tensor, batch: torch.tensor
+    ) -> torch.tensor:
         # Graph Convolutions
         h = self.conv1(x, edge_index).relu()
         h = self.conv2(h, edge_index).relu()
@@ -163,9 +171,13 @@ class GNNWithAttentionFusion(GNN):
         root = torch.cat([root.new_zeros(1), root + 1], dim=0)
         if root.shape[0] < self.hidden_channels:
             self.root_size = root.shape[0]
-            zero_pad = torch.zeros(self.hidden_channels - root.shape[0], dtype=torch.long).to(self.device)
+            zero_pad = torch.zeros(
+                self.hidden_channels - root.shape[0], dtype=torch.long
+            ).to(self.device)
             root = torch.cat([root, zero_pad])
-            zero_pad = torch.zeros((zero_pad.shape[0], 128), dtype=torch.long).to(self.device)
+            zero_pad = torch.zeros((zero_pad.shape[0], 128), dtype=torch.long).to(
+                self.device
+            )
             h = torch.cat([h, zero_pad], dim=0)
 
         # root is e.g. [   0,   14,   94,  171,  230,  302, ... ]

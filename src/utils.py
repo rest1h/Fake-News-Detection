@@ -1,14 +1,17 @@
 import subprocess
+from typing import List, Tuple
+
+import networkx as nx
 import numpy as np
 import torch
 from gensim.models import KeyedVectors
 from tqdm import tqdm
-import networkx as nx
-from typing import Tuple, List
 
 
 # From PyG utils
-def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False, remove_self_loops=False) -> nx.Graph:
+def to_networkx(
+    data, node_attrs=None, edge_attrs=None, to_undirected=False, remove_self_loops=False
+) -> nx.Graph:
     if to_undirected:
         G = nx.Graph()
     else:
