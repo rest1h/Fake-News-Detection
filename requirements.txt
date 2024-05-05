@@ -1,0 +1,12 @@
+torch>=1.7.0
+torch-scatter
+torch-sparse
+torch-geometric
+numpy
+pandas
+scikit-learn
+transformers
+gensim
+tqdm
+networkx
+matplotlib
